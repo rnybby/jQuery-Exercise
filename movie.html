@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Ratings</title>
+    <link rel="stylesheet" href="movie.css">
+</head>
+<body>
+    <div id="app">
+        <form id="movie-form">
+            <label for="title">Title:</label>
+            <input type="text" id="title" required minlength="2">
+            <label for="rating">Rating:</label>
+            <input type="number" id="rating" required min="0" max="10">
+            <button type="submit">Submit</button>
+        </form>
+        <div id="movies"></div>
+        <button id="sort-title">Sort by Title</button>
+        <button id="sort-rating">Sort by Rating</button>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function(){
+    $('#movie-form').submit(function(event){
+        event.preventDefault();
+        var title = $('#title').val();
+        var rating = $('#rating').val();
+        
+        if (title.length < 2) {
+            alert("Title must be at least 2 characters long.");
+            return;
+        }
+        
+        if (rating < 0 || rating > 10) {
+            alert("Rating must be between 0 and 10.");
+            return;
+        }
+        
+        $('#movies').append('<div class="movie"><span>Title: ' + title + '</span><span>, Rating: ' + rating + '</span><button class="remove-button">Remove</button></div>');
+        
+        $('#title').val('');
+        $('#rating').val('');
+    });
+
+    $('#movies').on('click', '.remove-button', function(){
+        $(this).parent().remove();
+    });
+
+    $('#sort-title').click(function(){
+        var moviesList = $('#movies .movie').toArray();
+        moviesList.sort(function(a, b){
+            var titleA = $(a).find('span:first').text().toUpperCase();
+            var titleB = $(b).find('span:first').text().toUpperCase();
+            return titleA.localeCompare(titleB);
+        });
+        $('#movies').empty().append(moviesList);
+    });
+
+    $('#sort-rating').click(function(){
+        var moviesList = $('#movies .movie').toArray();
+        moviesList.sort(function(a, b){
+            var ratingA = parseFloat($(a).find('span:last').text().match(/\d+/)[0]);
+            var ratingB = parseFloat($(b).find('span:last').text().match(/\d+/)[0]);
+            return ratingA - ratingB;
+        });
+        $('#movies').empty().append(moviesList);
+    });
+});
+
+    </script>
+</body>
+</html>
